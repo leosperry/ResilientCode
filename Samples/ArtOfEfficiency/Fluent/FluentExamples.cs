@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Samples.BlanketsHoldingNoHeat
+namespace Samples.ArtOfEfficiency.Fluent
 {
-    public class Order
+    class FluentExamples
     {
     }
 }

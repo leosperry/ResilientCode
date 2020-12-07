@@ -10,7 +10,6 @@ namespace Samples
         void Asdf()
         {
             List<int> ints = new List<int>();
-            ints.BinarySearch
         }
     }
 }
