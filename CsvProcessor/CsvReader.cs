@@ -12,10 +12,11 @@ class CsvReader<T> : ICsvReader<T> where T : class
 
     public bool FileHasHeader { get; set; } = true;
 
-    public CsvReader(string path, Func<string[], T> lineParser)
-    {
-        _path = path;
-    }
+        public CsvReader(string path, Func<string[], T> lineParser)
+        {
+            _path = path;
+            _lineParser = lineParser;
+        }
 
     public IEnumerable<T> Read()
     {
@@ -44,5 +45,41 @@ class CsvReader<T> : ICsvReader<T> where T : class
             }
         }
     }
+
+public IEnumerable<IEnumerable<T>> ReadBatched(int batchSize)
+{
+    StreamReader rdr = new StreamReader(_path);
+    if (FileHasHeader)
+    {
+        //ignore the first line
+        rdr.ReadLine();
+    }
+    while (!rdr.EndOfStream)
+    {
+        yield return GetBatch(batchSize, rdr);
+    }
 }
+
+private IEnumerable<T> GetBatch(int batchSize, StreamReader rdr)
+{
+    string line;
+    T item;
+    while (--batchSize >= 0 && (line = rdr.ReadLine()) != null)
+    {
+        item = null;
+        try
+        {
+            item = _lineParser(line.Split(','));
+        }
+        catch (Exception)
+        {
+            //log the error
+        }
+        if (item != null)
+        {
+            yield return item;
+        }
+    }
+}
+    }
 }
