@@ -6,15 +6,16 @@ namespace Samples.WhenThouYields.Linq
 {
     static class WhereExample
     {
-        public static IEnumerable<T> Where<T>(this IEnumerable<T> collection, Func<T, bool> filter)
+public static IEnumerable<T> Where<T>(this IEnumerable<T> collection, 
+    Func<T, bool> filter)
+{
+    foreach (var item in collection)
+    {
+        if (filter(item))
         {
-            foreach (var item in collection)
-            {
-                if (filter(item))
-                {
-                    yield return item;
-                }
-            }
+            yield return item;
         }
+    }
+}
     }
 }

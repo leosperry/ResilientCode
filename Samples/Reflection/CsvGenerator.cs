@@ -6,10 +6,11 @@ using System.Reflection;
 
 namespace Samples.Reflection
 {
-public interface ICsvGenerator
-{
-    IEnumerable<string> OutputToCsv<T>(IEnumerable<T> collection, char delimiter = ',');
-}
+    public interface ICsvGenerator
+    {
+        IEnumerable<string> OutputToCsv<T>(
+            IEnumerable<T> collection, char delimiter = ',');
+    }
 
     public class CsvGeneratorSlow : ICsvGenerator
     {
@@ -46,10 +47,8 @@ public interface ICsvGenerator
 
         private static string EscapeAndWrap(string input)
         {
-            return input;
             return $"\"{input.Replace("\"", "\"\"")}\"";
         }
-
     }
 
 public class CsvGeneratorFast : ICsvGenerator
@@ -61,10 +60,14 @@ public class CsvGeneratorFast : ICsvGenerator
     {
         _toString = typeof(object).GetMethod("ToString");
         _aggregate = typeof(Enumerable).GetMethods()
-            .First(m => m.Name == nameof(Enumerable.Aggregate) && m.GetGenericArguments().Length == 1).MakeGenericMethod(typeof(string));
+            .First(m => 
+            m.Name == nameof(Enumerable.Aggregate) && 
+            m.GetGenericArguments().Length == 1)
+            .MakeGenericMethod(typeof(string));
     }
 
-    public IEnumerable<string> OutputToCsv<T>(IEnumerable<T> objects, char delimiter = ',')
+    public IEnumerable<string> OutputToCsv<T>(
+        IEnumerable<T> objects, char delimiter = ',')
     {
         return CsvBuilder<T>.Actual(objects, delimiter);
     }
@@ -92,8 +95,8 @@ public class CsvGeneratorFast : ICsvGenerator
                 properties.Select(p => EscapeAndWrap(p.Name))
                 .Aggregate((s1, s2) => $"{s1}{delimiter}{s2}");
 
-            var valueGetters =
-                properties.Select(prop => BuildPropertyGetter(prop)).ToArray();
+            var valueGetters = properties.Select(prop => 
+                BuildPropertyGetter(prop)).ToArray();
 
             _lineBuilder = (delimiter, item) =>
                 valueGetters.Select(getter =>
@@ -110,8 +113,17 @@ public class CsvGeneratorFast : ICsvGenerator
                 .Aggregate((s1, s2) => $"{s1}{delimiter}{s2}");
         }
 
-        public static IEnumerable<string> Actual(IEnumerable<T> items, char delimiter)
+        public static IEnumerable<string> Actual(
+            IEnumerable<T> items, char delimiter)
         {
+            if (items == null)
+            {
+                throw new ArgumentNullException(nameof(items));
+            }
+            if (_headerBuilder == null)
+            {
+                throw new Exception("object has no readable properties");
+            }
             yield return _headerBuilder(delimiter);
             foreach (var item in items)
             {
@@ -123,38 +135,41 @@ public class CsvGeneratorFast : ICsvGenerator
         {
             // we're going to build an expression 
             // if the property is a value type
-            //     item => item.Property.ToString()
+            //   item => item.Property.ToString()
             // otherwise
-            //     item => item.Property == null ? "null" : item.Property.ToString();
+            //   item => item.Property == null ? 
+            //     "null" : item.Property.ToString();
             var type = typeof(T);
             var input = Expression.Parameter(typeof(T), "item");
 
             var propExpression = Expression.Property(input, prop);
 
-            var toString = prop.PropertyType != typeof(string) 
+            var toString = prop.PropertyType != typeof(string)
                 ? (Expression)Expression.Call(propExpression, _toString)
                 : propExpression;
-                
+
 
             if (prop.PropertyType.IsValueType)
             {
-                var lambda = Expression.Lambda<Func<T, string>>(toString, input).Compile();
+                var lambda = Expression.Lambda<Func<T, string>>
+                        (toString, input).Compile();
                 return item => EscapeAndWrap(lambda(item));
             }
             else
             {
                 var nullExpression = Expression.Constant(null);
                 var isNull = Expression.Equal(propExpression, nullExpression);
-                var condition = Expression.Condition(isNull, Expression.Constant("null"), toString);
-                    
-                var lambda = Expression.Lambda<Func<T, string>>(condition, input).Compile();
+                var condition = Expression.Condition(isNull,
+                    Expression.Constant("null"), toString);
+
+                var lambda = Expression.Lambda<Func<T, string>>
+                        (condition, input).Compile();
                 return item => EscapeAndWrap(lambda(item));
             }
         }
 
         private static string EscapeAndWrap(string input)
         {
-                return input;
             return $"\"{input.Replace("\"", "\"\"")}\"";
         }
     }

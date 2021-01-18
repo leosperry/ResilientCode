@@ -9,34 +9,32 @@ namespace Samples.Reflection
     public class Examples
     {
 
-        void OkReflectionExamples<T>(MyType someObject)
-        {
-            // getting a referene to a Type
-            Type t = typeof(T);
-            t = someObject.GetType();
+void OkReflectionExamples<T>(MyType someObject)
+{
+    // getting a referene to a Type
+    Type t = typeof(T);
+    t = someObject.GetType();
 
-            // getting member information
-            PropertyInfo propInfo = t.GetProperty(
-                nameof(MyType.MyProperty), BindingFlags.Public | BindingFlags.Instance);
+    // getting member information
+    PropertyInfo propInfo = t.GetProperty(nameof(MyType.MyProperty)
+        , BindingFlags.Public | BindingFlags.Instance);
 
-            MethodInfo methodInfo = t.GetMethod(
-                nameof(MyType.MyMethod), BindingFlags.DeclaredOnly);
+    MethodInfo methodInfo = t.GetMethod(
+        nameof(MyType.MyMethod), BindingFlags.DeclaredOnly);
 
-            //dicovering attributes
-            var attribute = t.GetCustomAttribute<MyAttribute>();
+    //dicovering attributes
+    var attribute = t.GetCustomAttribute<MyAttribute>();
 
-            //discovering if a type is derived from or implements another
-            bool inherits = typeof(object).IsAssignableFrom(t);
-        }
+    //discovering if a type is derived from or implements another
+    bool inherits = typeof(object).IsAssignableFrom(t);
+}
 
-        void ExpensiveReflectionExamples(
-            object someObject,
-            PropertyInfo someProperty,
-            MethodInfo someMethod)
-        {
-            someProperty.GetValue(someObject);
-            someMethod.Invoke(someObject, null);
-        }
+void ExpensiveReflectionExamples(object someObject,
+    PropertyInfo someProperty, MethodInfo someMethod)
+{
+    someProperty.GetValue(someObject);
+    someMethod.Invoke(someObject, null);
+}
 
         public class MyAttribute : Attribute
         {

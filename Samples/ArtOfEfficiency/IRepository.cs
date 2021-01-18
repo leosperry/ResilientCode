@@ -4,10 +4,15 @@ using System.Text;
 
 namespace Samples.ArtOfEfficiency
 {
+class MyClass
+{
+
+}
 public interface IRepository<T, Tid, Tkey>
 {
     IEnumerable<T> GetAll();
     T GetById(Tid id);
+    IEnumerable<T> GetByKey(Tkey key);
     void Create(T item);
     void Update(T item);
     void Delete(T item);

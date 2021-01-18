@@ -10,71 +10,71 @@ namespace Samples.OofOne
         readonly ICategoryProvider _categoryProvider;
         readonly IBookProvider _bookProvider;
 
-        IEnumerable<Category> GetCategoriesFromBooks(
-            IEnumerable<Book> books,
-            IEnumerable<Category> categories)
+IEnumerable<Category> GetCategoriesFromBooks(
+    IEnumerable<Book> books,
+    IEnumerable<Category> categories)
+{
+    List<Category> usedCategories = new List<Category>();
+
+    foreach (var book in books)
+    {
+        foreach (var catId in book.CategoryIds)
         {
-            List<Category> usedCategories = new List<Category>();
-
-            foreach (var book in books)
+            var category = categories.FirstOrDefault(c => c.ID == catId);
+            if (category != null &&
+                usedCategories.Any(uc => uc.ID == category.ID))
             {
-                foreach (var catId in book.CategoryIds)
-                {
-                    var category = categories.FirstOrDefault(c => c.ID == catId);
-                    if (category != null &&
-                        usedCategories.Any(uc => uc.ID == category.ID))
-                    {
-                        usedCategories.Add(category);
-                    }
-                }
-            }
-            return usedCategories;
-        }
-
-        IEnumerable<Category> GetCategoriesFromBooks2(
-            IEnumerable<Book> books,
-            IEnumerable<Category> categories)
-        {
-            var usedCategoryIds = books.SelectMany(b => b.CategoryIds);
-            var categoryHash = new HashSet<int>(usedCategoryIds);
-
-            foreach (var category in categories)
-            {
-                if (categoryHash.Contains(category.ID))
-                {
-                    yield return category;
-                }
-            }
-        }
-
-        public IEnumerable<Book> GetRelatedBooks(Book book)
-        {
-            Dictionary<Book, int> bookCounts = new Dictionary<Book, int>();
-            foreach (var cat in _categoryProvider.GetCategories(book))
-            {
-                var booksInCat = _bookProvider.GetBooksInCategory(cat.ID);
-                UpdateBookCounts(bookCounts, booksInCat);
-            }
-
-            return bookCounts.OrderBy(kvp => kvp.Value).Select(kvp => kvp.Key);
-        }
-
-        private static void UpdateBookCounts(
-            Dictionary<Book, int> bookCounts, IEnumerable<Book> books)
-        {
-            foreach (var relatedBook in books)
-            {
-                if (bookCounts.ContainsKey(relatedBook))
-                {
-                    bookCounts[relatedBook] = bookCounts[relatedBook] + 1;
-                }
-                else
-                {
-                    bookCounts[relatedBook] = 1;
-                }
+                usedCategories.Add(category);
             }
         }
     }
+    return usedCategories;
+}
+
+IEnumerable<Category> GetCategoriesFromBooks2(
+    IEnumerable<Book> books,
+    IEnumerable<Category> categories)
+{
+    var usedCategoryIds = books.SelectMany(b => b.CategoryIds);
+    var categoryHash = new HashSet<int>(usedCategoryIds);
+
+    foreach (var category in categories)
+    {
+        if (categoryHash.Contains(category.ID))
+        {
+            yield return category;
+        }
+    }
+}
+
+public IEnumerable<Book> GetRelatedBooks(Book book)
+{
+    Dictionary<Book, int> bookCounts = new Dictionary<Book, int>();
+    foreach (var cat in _categoryProvider.GetCategories(book))
+    {
+        var booksInCat = _bookProvider.GetBooksInCategory(cat.ID);
+        UpdateBookCounts(bookCounts, booksInCat);
+    }
+
+    return bookCounts.OrderBy(kvp => kvp.Value).Select(kvp => kvp.Key);
+}
+
+private static void UpdateBookCounts(
+    Dictionary<Book, int> bookCounts, IEnumerable<Book> books)
+{
+    foreach (var relatedBook in books)
+    {
+        if (bookCounts.ContainsKey(relatedBook))
+        {
+            bookCounts[relatedBook] = bookCounts[relatedBook] + 1;
+        }
+        else
+        {
+            bookCounts[relatedBook] = 1;
+        }
+    }
+}
+}
 
 
     public interface ICategoryProvider

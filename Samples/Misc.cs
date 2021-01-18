@@ -31,6 +31,22 @@ public void TopLevelMethod()
             CallAnotherMethod();
         }
     }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "unhandled error");
+    }
+}
+
+
+public void TopLevelMethod2()
+{
+    try
+    {
+        using (_logger.BeginScope("add context here"))
+        {
+            CallAnotherMethod();
+        }
+    }
     catch (Exception ex) when (HandleException(ex, true)) 
     {
     }

@@ -37,7 +37,7 @@ class CsvReader<T> : ICsvReader<T> where T : class
             }
             catch (Exception)
             {
-                //log the error
+                //handle the exception
             }
             if (item != null)
             {

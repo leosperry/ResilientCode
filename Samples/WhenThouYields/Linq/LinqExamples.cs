@@ -8,16 +8,29 @@ namespace Samples.WhenThouYields.Linq
 {
     class LinqExamples
     {
+        object CountExample(IEnumerable<object> someCollection)
+        {
+if (someCollection.Count() > 1)
+{
+    //iterate the collection
+}
+
+return new { 
+    data = someCollection,
+    recordCount = someCollection.Count()
+};
+        }
+
         void twocollection()
         {
             List<Book> books = null;
             List<Category> categories = null;
 
-        var categoriesUsedInBooks =
-            from cId in books.SelectMany(b => b.CategoryIds).Distinct()
-            join c in categories
-            on cId equals c.ID
-            select c;
+var categoriesUsedInBooks =
+    from cId in books.SelectMany(b => b.CategoryIds).Distinct()
+    join cat in categories
+    on cId equals cat.ID
+    select cat;
 
         }
     }

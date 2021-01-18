@@ -14,7 +14,7 @@ interface IAccountParsingLogic
     string GetNameForSaving(string input);
     int? GetAccountNumber(string input);
     decimal? GetValue(string input);
-        bool AccountIsValid(Account account);
+    bool AccountIsValid(Account account);
 }
 
 interface IAccountProvider

@@ -58,7 +58,8 @@ public Task<IEnumerable<Book>> Search(string query)
     }
 }
 
-public async Task Create(string title, string description, int authorId, IEnumerable<int> categoryIds)
+public async Task Create(string title, string description, int authorId, 
+    IEnumerable<int> categoryIds)
 {
     if (string.IsNullOrEmpty(title) && authorId > 0)
     {
@@ -73,7 +74,8 @@ public async Task Create(string title, string description, int authorId, IEnumer
 
             if (categories.All(c => c != null))
             {
-                await _bookProvider.Create(title, description, authorId, categoryIds);
+                await _bookProvider.Create(
+                    title, description, authorId, categoryIds);
                 return;
             }
         }
