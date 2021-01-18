@@ -52,8 +52,8 @@ namespace Samples.OofOne
             Dictionary<Book, int> bookCounts = new Dictionary<Book, int>();
             foreach (var cat in _categoryProvider.GetCategories(book))
             {
-                var categories = _bookProvider.GetBooksInCategory(cat.ID);
-                UpdateBookCounts(bookCounts, categories);
+                var booksInCat = _bookProvider.GetBooksInCategory(cat.ID);
+                UpdateBookCounts(bookCounts, booksInCat);
             }
 
             return bookCounts.OrderBy(kvp => kvp.Value).Select(kvp => kvp.Key);

@@ -12,15 +12,14 @@ public class BusinessServiceWithDependencyInversion
     readonly ILogger _logger;
     
     public BusinessServiceWithDependencyInversion(
-        IObjectProvider objProvider,
-        ILogger logger)
+        IObjectProvider objProvider, ILogger logger)
     {
         _objectProvider = objProvider;
         _logger = logger;
     }
 
     public IEnumerable<SomeBusinessObject>
-        GetObjectsForSpecialUseCase(int categoryId)
+            GetObjectsForSpecialUseCase(int categoryId)
     {
         _logger.Log("beginning complex domain logic");
         var objects = _objectProvider.GetObjectsByCategory(categoryId);

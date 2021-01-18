@@ -17,16 +17,12 @@ class MagicEnumerator : IEnumerator
 
     public bool MoveNext()
     {
-        var one = GetOne();
-        if (one == null)
+        var moreItems = GetOne(out var item);
+        if (moreItems)
         {
-            return false;
+            Current = item;
         }
-        else
-        {
-            Current = one;
-            return true;
-        }
+        return moreItems;
     }
 
     public void Reset()
@@ -34,15 +30,18 @@ class MagicEnumerator : IEnumerator
         // compiler magic that resets the state of the _collectionGetter
     }
 
-    private object GetOne()
+    private bool GetOne(out object item)
     {
+        bool ranToCompletion = false;
         /*
             * Compiler magic that knows how to call the underlying reference
             * to the _collectionGetter and returns a single item
             * 
-            * if there is no next item it returns null
+            * if there is _collectionGetter has run to completion
+            * sets ranToCompletion to true
             */
-        return default;
+        item = default;
+        return !ranToCompletion;
     }
 }
 }
