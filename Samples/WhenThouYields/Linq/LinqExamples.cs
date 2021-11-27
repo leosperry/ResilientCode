@@ -12,7 +12,10 @@ namespace Samples.WhenThouYields.Linq
         {
 if (someCollection.Count() > 1)
 {
-    //iterate the collection
+    foreach (var item in someCollection)
+    {
+        // do work
+    }
 }
 
 return new { 

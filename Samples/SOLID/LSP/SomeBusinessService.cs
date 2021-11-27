@@ -7,8 +7,9 @@ namespace Samples.SOLID.LSP
 {
 abstract class SomeBusinessServiceBase
 {
-    private List<SomeBusinessObject> _objects;
-    protected abstract void LoadData();
+    protected List<SomeBusinessObject> _objects;
+
+    public abstract void LoadData();
 
     public virtual void Render()
     {

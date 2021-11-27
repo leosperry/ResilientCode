@@ -12,7 +12,7 @@ namespace CsvProcessor
         {
             //ThreadPool.SetMaxThreads(100, 100);
             FileProcessor processor = new FileProcessor(new FakeWidgetLogic(), new FakeWidgetProvider());
-            processor.ProcessFileWithSemaphoreFixed(@"S:\Code\TaoOfCode\CsvProcessor\FakeData.txt").Wait();
+            processor.ProcessFileWithSemaphoreFixed(@".\FakeData.txt").Wait();
         }
 
 static void initial(string[] args)
